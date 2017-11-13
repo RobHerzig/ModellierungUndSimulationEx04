@@ -8,7 +8,50 @@ import java.util.LinkedList;
 /**
  * This class implements a discrete time autocorrelation counter
  */
-public class DiscreteAutocorrelationCounter {
+public class DiscreteAutocorrelationCounter extends DiscreteCounter{
+
+	long maxLag = 0;
+	public DiscreteAutocorrelationCounter(String variable, int maxLag) {
+		super(variable);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public DiscreteAutocorrelationCounter(String variable, String type, int maxLag) {
+		super(variable);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public long getMaxLag() {
+		long result = 0;
+		
+		return result;
+	}
+	
+	public void setMaxLag(long maxLag) {
+		this.maxLag = maxLag;
+	}
+	
+	public void count(double x) {
+		
+	}
+	
+	public double getAutoCovariance(int lag) {
+		double result = 0;
+		
+		return result;
+	}
+	
+	public double getAutoCorrelation(int lag) {
+		double result = 0;
+		
+		return result;
+	}
+	
+	public void reset() {
+		
+	}
+	
+	
 	/*
      * TODO Problem 4.1.1 - Implement this class according to the given class diagram!
      * Hint: see section 4.4 in course syllabus
