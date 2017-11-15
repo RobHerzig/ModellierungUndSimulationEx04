@@ -29,11 +29,10 @@ public class SimulationStudy {
      */
 	
 	/*
-	 * Server Utilization Time is 0.8s per customer -> 8s for 10^1 and 0.8*10^5s for 10^5 customers
-	 * Add to that: InterarrivalTime of 1s per customer -> 10s / 10^5s respectively
-	 * Add: 
+	 * Interpolate cSimulationTime until desired amount of customers has been served
 	 */
-	protected long cSimulationTime = 100000;
+	protected long cSimulationTime = 100282; //for 10^5 customers
+//	protected long cSimulationTime = 8; //for 10 customers
 
 	/**
 	 * Main method
@@ -166,6 +165,9 @@ public class SimulationStudy {
 		/*
 		 * TODO Problem 4.2.5 - Create a DiscreteAutocorrelationCounter here
 		 */
+		int maxLagForCounter = 50;
+		statisticObjects.put(dtaWaitingTime, new DiscreteAutocorrelationCounter("waiting Time customer", maxLagForCounter)); 
+
 	}
 
 

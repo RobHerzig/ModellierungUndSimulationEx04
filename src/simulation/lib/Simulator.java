@@ -27,6 +27,8 @@ public class Simulator implements IEventObserver {
      * Contains simulator state.
      */
     private SimulationState state;
+    
+    long customerCount = 0; //for finding out the parameters needed for 10 & 10^5 customers
 
     /**
      * Constructor
@@ -40,6 +42,8 @@ public class Simulator implements IEventObserver {
         state = new SimulationState(sims);
         // push the first customer arrival at t = 0
         pushNewEvent(new CustomerArrivalEvent(state, 0));
+        customerCount++;
+        System.out.println(customerCount + " customers");
         // push the termination event at the simulationTime (max duration of simulation)
         pushNewEvent(new SimulationTerminationEvent(sims.simulationTime));
     }
@@ -116,6 +120,7 @@ public class Simulator implements IEventObserver {
      * @param e the new event
      */
     private void pushNewEvent(Event e) {
+//    	System.out.println("WAITING TIME: " + simTimeToRealTime(waitingTime));
         ec.pushNewElement(e);
     }
 
@@ -187,6 +192,8 @@ public class Simulator implements IEventObserver {
 
     }
 
+    long waitingTime = 0;
+    
     /**
      * Update statistics, fired from service completion event
      *
@@ -199,8 +206,9 @@ public class Simulator implements IEventObserver {
             // update customer service end time
             currentCustomer.serviceEndTime = getSimTime();
 
-            long waitingTime = currentCustomer.getTimeInQueue();
+            waitingTime = currentCustomer.getTimeInQueue();
             long serviceTime = currentCustomer.getTimeInService();
+//            System.out.println("waiting time: " + simTimeToRealTime(waitingTime));
             sims.statisticObjects.get(sims.dtcWaitingTime).count(simTimeToRealTime(waitingTime));
             sims.statisticObjects.get(sims.dthWaitingTime).count(simTimeToRealTime(waitingTime));
 
@@ -210,6 +218,8 @@ public class Simulator implements IEventObserver {
              * TODO Problem 4.2.5 - Update the DiscreteAutocorrelationCounter here
              * Count customer's waiting time
              */
+            sims.statisticObjects.get(sims.dtaWaitingTime).count(simTimeToRealTime(waitingTime));
+
 
         }
         // update server utilization
@@ -247,6 +257,8 @@ public class Simulator implements IEventObserver {
             long interarrivalTime = 0;
             interarrivalTime = sims.randVarInterArrivalTime.getLongRV();
             pushNewEvent(new CustomerArrivalEvent(state, this.getSimTime() + interarrivalTime));
+            customerCount++;
+        	System.out.println(customerCount + " customers");
         } else if (c == ServiceCompletionEvent.class) {
             long serviceTime = 0;
             serviceTime = sims.randVarServiceTime.getLongRV();
