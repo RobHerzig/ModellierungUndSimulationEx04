@@ -22,13 +22,11 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 	public DiscreteAutocorrelationCounter(String variable, int maxLag) {
 		super(variable);
 		initVars(maxLag);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public DiscreteAutocorrelationCounter(String variable, String type, int maxLag) {
-		super(variable);
+		super(variable, type);
 		initVars(maxLag);
-		// TODO Auto-generated constructor stub
 	}
 	
 	private void initVars(int maxLag) {
@@ -41,6 +39,7 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 	}
 
 	private void initSumList(int maxLag) {
+//		System.out.println("INIT SUM LIST WITH " + maxLag + " ELEMENTS");
 		for(int i = 0; i < maxLag; i++) {
 			listOfSumCounters.add(0.0d);
 		}
@@ -64,15 +63,22 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 		if(lastVariables.size() > this.maxLag) lastVariables.remove(0);
 		
 		//5.6 "Interne Datenhaltung" sum_k(0:j) x_(i-k) * x_i
-		long j = (this.maxLag > (getNumSamples() -1)) ? maxLag : getNumSamples()-1;
+//		long j = (this.maxLag <= (getNumSamples() -1)) ? maxLag : (getNumSamples()-1);
+		int j = (int) Math.min(getNumSamples()-1, maxLag);
 		for(int k = 0; k < j; k++) {
+			//System.out.println(k + "th iteration");
+//			System.out.println("Acquire element " + (k) + " from sumCounterList with " + listOfSumCounters.size());
 			listOfSumCounters.set(k, listOfSumCounters.get(k) + lastVariables.get(lastVariables.size()-1-k) * x);
 		}
+//		System.out.println("Number of sum elements after count: " + listOfSumCounters.size());
 	}
 	
 	public double getAutoCovariance(int lag) {
 		double result = 0;
+//		System.out.println("MAX LAG: " + maxLag);
 		long realLag = (lag < maxLag) ? lag : maxLag;
+		if(realLag > listOfSumCounters.size()-1) 
+			realLag = listOfSumCounters.size()-1; //otherwise we would divide by zero. quickmafs, smoke trees
 		
 		double sumDiff = 0;
 		for(int i = 0; i < realLag; i++) {
@@ -81,11 +87,13 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 			sumDiff = sumDiff + first + last;
 		}
 		
+//		System.out.println("Elements in sum-list: " + listOfSumCounters.size() + " Requested: " + realLag);
+		
 		//formula 2.34:
-		result = 1 / (this.getNumSamples() - lag) * 
-				listOfSumCounters.get((int) realLag) - getMean() *
-				(2 * getSumPowerOne() - sumDiff) +
-				Math.pow(getMean(), 2);
+		result = (1d / (this.getNumSamples() - realLag)) * 
+				(listOfSumCounters.get((int) realLag) - getMean() *
+				(2d * getSumPowerOne() - sumDiff)) +
+				Math.pow(getMean(), 2d);
 		
 		return result;
 	}
@@ -99,21 +107,15 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 	
 	public void reset() {
 		super.reset();
+		System.out.println("RESET DISCRETE AUTOCORRELATION COUNTER");
 		firstVariables.clear();
 		lastVariables.clear();
 		listOfSumCounters.clear();
 	}
 	
-	
-	/*
-     * TODO Problem 4.1.1 - Implement this class according to the given class diagram!
-     * Hint: see section 4.4 in course syllabus
-     */
-
 
 	/**
 	 * @see Counter#report()
-	 * TODO Uncomment this function if you have implemented the class!
 	 */
 	@Override
 	public String report() {
@@ -128,7 +130,6 @@ public class DiscreteAutocorrelationCounter extends DiscreteCounter{
 	}
 	/**
 	 * @see Counter#csvReport(String)
-	 * TODO Uncomment this function if you have implemented the class!
 	 */
 	@Override
 	public void csvReport(String outputdir){

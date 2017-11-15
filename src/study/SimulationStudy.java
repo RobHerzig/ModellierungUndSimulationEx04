@@ -27,13 +27,18 @@ public class SimulationStudy {
      * Note: Units are real time units (seconds).
      * They get converted to simulation time units in setSimulationParameters.
      */
+	
+	/*
+	 * Server Utilization Time is 0.8s per customer -> 8s for 10^1 and 0.8*10^5s for 10^5 customers
+	 * Add to that: InterarrivalTime of 1s per customer -> 10s / 10^5s respectively
+	 * Add: 
+	 */
 	protected long cSimulationTime = 100000;
 
 	/**
 	 * Main method
 	 */
 	public static void main(String[] args) {
-		//GIT TEST
 		/*
 		 * create simulation object
 		 */
@@ -124,13 +129,11 @@ public class SimulationStudy {
 	private void setSimulationParameters() {
 		simulationTime = simulator.realTimeToSimTime(cSimulationTime);
 
-		/*
-		 * TODO Problem 4.2.1/2/5 - Create randVar instances
-		 * Create instances for this.randVarInterArrivalTime and this.randVarServiceTime
-		 * !!! Make sure that they use StdRNG objects with DIFFERENT SEEDS !!!
-		 * These random variables are later used in the Simulator class to create random interarrival and service times
-		 * Notice that the mean values need to be modified for 4.2.2 and 4.2.5!
-		 */
+		double serviceTimeMean = .803259d; //Adapted until system util mean was .80
+		StdRNG interArrivalRNG = new StdRNG(123456);
+		StdRNG serviceTimeRNG = new StdRNG(234567);
+		randVarInterArrivalTime=new Exponential(interArrivalRNG, simulator.realTimeToSimTime(1));
+		randVarServiceTime= new Exponential(serviceTimeRNG, simulator.realTimeToSimTime(serviceTimeMean)); 
 	}
 
 	/**

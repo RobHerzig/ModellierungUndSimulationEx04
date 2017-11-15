@@ -244,20 +244,12 @@ public class Simulator implements IEventObserver {
      */
     public void pushNewEventHandler(Class<?> c) {
         if (c == CustomerArrivalEvent.class) {
-            /*
-			 * TODO Problem 4.2.1 - Create random interarrival times
-			 * Use your random variable contained in the SimulationStudy object
-			 * !!! Mind the difference between simulation and real time and do conversions accordingly !!!
-			 */
             long interarrivalTime = 0;
+            interarrivalTime = sims.randVarInterArrivalTime.getLongRV();
             pushNewEvent(new CustomerArrivalEvent(state, this.getSimTime() + interarrivalTime));
         } else if (c == ServiceCompletionEvent.class) {
-            /*
-			 * TODO Problem 4.2.1 - Create random service times
-			 * Use your random variable contained in the SimulationStudy object
-			 * !!! Mind the difference between simulation and real time and do conversions accordingly !!!
-			 */
             long serviceTime = 0;
+            serviceTime = sims.randVarServiceTime.getLongRV();
             pushNewEvent(new ServiceCompletionEvent(state, this.getSimTime() + serviceTime));
         }
     }
